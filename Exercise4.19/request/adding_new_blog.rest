@@ -1,0 +1,10 @@
+POST http://localhost:3001/api/blogs
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImxpbnVzbndhbmt3byIsImlkIjoiNjRjZmE3Njg1MzYzNzY4YWJjMGJlNzVkIiwiaWF0IjoxNjkxMzM1MDk4fQ.YUw62M1QlH6e1M8buowqNJtg2-wqVuPgwnwgi6uWaeA
+
+{
+    "title": "testing Login",
+    "author": "Linus Nwankwo",
+    "url": "https://nogarea.com",
+    "likes": 3
+}

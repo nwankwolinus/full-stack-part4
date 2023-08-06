@@ -1,0 +1,11 @@
+POST http://localhost:3001/api/blogs
+Content-Type: application/json
+
+{
+    "title": "testing put",
+    "author": "Linus Nwankwo",
+    "url": "https://nogarea.com",
+    "likes": 7,
+    "userId": "64cfa7685363768abc0be75d"
+
+}

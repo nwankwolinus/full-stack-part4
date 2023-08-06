@@ -1,0 +1,10 @@
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+
+{
+    "title": "Rich also cries",
+    "Authur": "Richard Hurdson",
+    "URL": "https://nogoarea.com",
+    "Likes": 5
+
+}
