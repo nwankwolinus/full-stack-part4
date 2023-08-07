@@ -1,0 +1,10 @@
+POST http://localhost:3001/api/blogs
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImxpbnVzbndhbmt3byIsImlkIjoiNjRjZmE3Njg1MzYzNzY4YWJjMGJlNzVkIiwiaWF0IjoxNjkxMzU3NTk5fQ.VBSQoJF0TVA7jiLuzkFEFxYew7GhGVAGn8v-n8_iAss
+
+{
+    "title": "testing deleting blog with token",
+    "author": "Linus Nwankwo",
+    "url": "https://nogarea.com",
+    "likes": 4
+}
