@@ -4,6 +4,7 @@ const User = require('../models/user')
 const logger = require('../utils/logger')
 const jwt = require('jsonwebtoken')
 const middleware = require('../utils/middleware')
+const { userExtractor } = require('../utils/middleware')
 
 blogsRouter.get('/', async (request, response) => {
   const blogs = await Blog
@@ -12,49 +13,43 @@ blogsRouter.get('/', async (request, response) => {
 })
   
 blogsRouter.post('/', async (request, response) => {
-  const body = request.body
-  logger.info(request.body)
-  logger.info(request.token)
-
-  const decodedToken = jwt.verify(request.token, process.env.SECRET)
-  if (!decodedToken.id) {
-    return response.status(401).json({ error: 'token invalid' })
-  }
-  const user = await User.findById(decodedToken.id)
-  
-  const blog = new Blog ({
-    title: body.title,
-    author: body.author,
-    url: body.url,
-    likes: body.likes,
-    date: new Date(),
-    user: user._id
+  const { title, author, url, likes } = request.body
+  const blog = new Blog({
+    title, author, url, 
+    likes: likes ? likes : 0
   })
-    const savedBlog = await blog.save()
-    user.blogs = user.blogs.concat(savedBlog._id)
-    await user.save()
 
-    response.json(savedBlog)
+  const user = request.user
+
+  if (!user) {
+    return response.status(401).json({ error: 'operation not permitted' })
+  }
+
+  blog.user = user._id
+
+  const createdBlog = await blog.save()
+
+  user.blogs = user.blogs.concat(createdBlog._id)
+  await user.save()
+
+  response.status(201).json(createdBlog)
 })
 
-
 blogsRouter.delete('/:id', async (request, response) => {
-  const token = request.token
-  const decodedToken = jwt.verify(token, process.env.SECRET)
-  if (!token || !decodedToken.id) {
-    return response.status(401).json({ error: 'token missing or invalid' })
-  }
-  const user = await User.findById(decodedToken.id)
-  const blogId = request.params.id
-  const blog = await Blog.findById(blogId)
+  const blog = await Blog.findById(request.params.id)
 
-  if ( blog.user.toString() === user.id.toString() ) {
-    await Blog.findByIdAndRemove(request.params.id)
-    response.status(204).end()
+  const user = request.user
+
+  if (!user || blog.user.toString() !== user.id.toString()) {
+    return response.status(401).json({ error: 'operation not permitted' })
   }
-  else {
-    return response.status(401).json({ error: 'invalid user' })
-  }
+
+  user.blogs = user.blogs.filter(b => b.toString() !== blog.id.toString() )
+
+  await user.save()
+  await blog.remove()
+  
+  response.status(204).end()
 })
 
 blogsRouter.put('/:id', async (request, response)=> {
